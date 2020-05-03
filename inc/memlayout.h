@@ -1,5 +1,5 @@
-#ifndef JOS_INC_MEMLAYOUT_H
-#define JOS_INC_MEMLAYOUT_H
+#ifndef INC_MEMLAYOUT_H
+#define INC_MEMLAYOUT_H
 
 #ifndef __ASSEMBLER__
 #include "types.h"

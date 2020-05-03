@@ -79,8 +79,9 @@ sudo apt intall gcc-multilib
 
 ## TIPS:
 
-  *what does os, gdb or other system doing in startup?* 
-
+  **what does os, gdb or other system doing in startup?**
+  
+  **you should always think where your data structure in memory. Because in kernel, your data will get invalid if you not consider, which is different to user program.**
 
 
 ## memory management:
@@ -149,3 +150,6 @@ inb(int port)
 ld -m    elf_i386   -Ttext 0x7C00  -e entry obj/boot/boot.o obj/boot/bootmain.o -o obj/boot/boot.out
 
 ```
+
+
+## user environment:
