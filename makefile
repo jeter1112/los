@@ -96,10 +96,23 @@ $(OBJDIR)/$(BOOTDIR)/%.o:$(BOOTDIR)/%.c
 
 
 
+
+
+OBJDIRS += kern
+
+KERN_LDFLAGS := $(LDFLAGS) -T kern/kernel.ld -nostdlib
+
+# entry.S must be first, so that it's the first code in the text segment!!!
+#
+# We also snatch the use of a couple handy source files
+# from the lib directory, to avoid gratuitous code duplication.
+
+
+## /usr/lib/gcc/x86_64-linux-gnu/4.8/32/libgcc.a
 #KERNEL compile
 $(OBJDIR)/$(KERNDIR)/kernel: $(KERNOBJ) $(LIBOBJ)
 
-	ld $(LD_KERNFLAGS) $^ /usr/lib/gcc/x86_64-linux-gnu/4.8/32/libgcc.a -b binary -o $@
+	ld $(LD_KERNFLAGS) $^ /usr/lib/gcc/x86_64-linux-gnu/7.5.0/32/libgcc.a -b binary -o $@
 	objdump -S $@ > $@.asm
 	nm -n $@ >$@.sym
 	dd if=/dev/zero of=$@.img~ count=10000 2>/dev/null
@@ -111,11 +124,12 @@ $(OBJDIR)/$(KERNDIR)/kernel: $(KERNOBJ) $(LIBOBJ)
 
 $(OBJDIR)/$(KERNDIR)/%.o:$(KERNDIR)/%.S 
 	mkdir -p $(@D)
-	gcc $(C_ASMFLAGS) -c   $< -o  $@	
+	gcc $(CFLAGS) -c   $< -o  $@	
 
 $(OBJDIR)/$(KERNDIR)/%.o:$(KERNDIR)/%.c	
 	mkdir -p $(@D)
 	gcc $(CFLAGS) -c   $< -o  $@
+
 
 $(OBJDIR)/$(LIBDIR)/%.o:$(LIBDIR)/%.c	
 	mkdir -p $(@D)

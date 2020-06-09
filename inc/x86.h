@@ -1,7 +1,7 @@
 #ifndef X86_H
 #define X86_H
 
-#include <inc/types.h>
+#include "inc/types.h"
 
 static inline void
 breakpoint(void)

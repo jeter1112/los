@@ -5,6 +5,7 @@
 #include"inc/printk.h"
 #include "inc/string.h"
 #include"inc/assert.h"
+#include"kern/env.h"
 /**
  * @brief pmap.c is the abbreation of page mapping.
  *  Goal:
@@ -213,6 +214,11 @@ mem_init(void)
 
 	pages=(struct PageInfo *) boot_alloc(npages*sizeof(struct PageInfo));
 	memset(pages, 0, npages*sizeof(struct PageInfo));
+
+	// allocate an array of struct env, and store it in envs.
+	envs=(struct Env *) boot_alloc(NENV*sizeof(struct Env));
+	memset(envs,0,NENV*sizeof(struct Env));
+	// printk("alloc envs buffer: start=%08x, buff_size=%08x ,len:%d, ele_size:%d\n", envs, NENV * sizeof(struct Env),NENV,sizeof(struct Env));
 	//////////////////////////////////////////////////////////////////////
 	// Now that we've allocated the initial kernel data structures, we set
 	// up the list of free physical pages. Once we've done so, all further
@@ -237,7 +243,18 @@ mem_init(void)
 	//      (ie. perm = PTE_U | PTE_P)
 	//    - pages itself -- kernel RW, user NONE
 	// Your code goes here:
-	boot_map_region(kern_pgdir,UPAGES,PTSIZE, PADDR(pages), PTE_U);
+	boot_map_region(kern_pgdir,UPAGES,PTSIZE, PADDR(pages), PTE_U|PTE_P);
+
+	
+	//////////////////////////////////////////////////////////////////////
+	// Map the 'envs' array read-only by the user at linear address UENVS
+	// (ie. perm = PTE_U | PTE_P).
+	// Permissions:
+	//    - the new image at UENVS  -- kernel R, user R
+	//    - envs itself -- kernel RW, user NONE
+	// Your code here.
+	boot_map_region(kern_pgdir, UENVS, PTSIZE, PADDR(envs), PTE_U|PTE_P);
+
 	//////////////////////////////////////////////////////////////////////
 	// Use the physical memory that 'bootstack' refers to as the kernel
 	// stack.  The kernel stack grows down from virtual address KSTACKTOP.
@@ -259,7 +276,7 @@ mem_init(void)
 	// Permissions: kernel RW, user NONE
 	// Your code goes here:
 	boot_map_region(kern_pgdir,KERNBASE, 0x10000000,0,PTE_W);
-
+	printk("boot map region finished\n");
 	check_kern_pgdir();
 	lcr3(PADDR(kern_pgdir));
 
@@ -275,7 +292,7 @@ mem_init(void)
 	// Some more checks, only possible after kern_pgdir is installed.
 	check_page_installed_pgdir();
 
-
+	printk("mem_init finished\n");
 }
 
 
@@ -957,6 +974,10 @@ check_kern_pgdir(void)
 	for (i = 0; i < n; i += PGSIZE)
 		assert(check_va2pa(pgdir, UPAGES + i) == PADDR(pages) + i);
 
+	// check envs array (new test for lab 3)
+	n = ROUNDUP(NENV*sizeof(struct Env), PGSIZE);
+	for (i = 0; i < n; i += PGSIZE)
+		assert(check_va2pa(pgdir, UENVS + i) == PADDR(envs) + i);
 
 	// check phys mem
 	for (i = 0; i < npages * PGSIZE; i += PGSIZE)
@@ -973,6 +994,7 @@ check_kern_pgdir(void)
 		case PDX(UVPT):
 		case PDX(KSTACKTOP-1):
 		case PDX(UPAGES):
+		case PDX(UENVS):
 			assert(pgdir[i] & PTE_P);
 			break;
 		default:

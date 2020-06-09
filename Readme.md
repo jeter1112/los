@@ -153,3 +153,22 @@ ld -m    elf_i386   -Ttext 0x7C00  -e entry obj/boot/boot.o obj/boot/bootmain.o 
 
 
 ## user environment:
+
+
+
+
+#### pits
+
+
+1. > Problem:
+   
+    When dismissed **#ifndef __ASSEMBLER__** report **Assembler messages: Error: no such instruction:**
+    
+
+   > Reasoning：
+    
+    ???
+
+   > Solution：
+
+     Insert **#ifndef __ASSEMBLER__** in assembly file.
