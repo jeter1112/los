@@ -1,7 +1,7 @@
 
 
 #include "inc/vga.h"
-#include "inc/printk.h"
+#include "inc/stdio.h"
 #include "kern/pmap.h"
 #include "kern/env.h"
 #include "kern/trap.h"

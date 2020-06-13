@@ -4,7 +4,7 @@
 
 #include "kern/pmap.h"
 #include "kern/trap.h"
-#include "inc/printk.h"
+#include "inc/stdio.h"
 #include "kern/env.h"
 #include "kern/syscall.h"
 

@@ -4,7 +4,7 @@
 #include "inc/error.h"
 #include "inc/string.h"
 #include "inc/assert.h"
-#include "inc/printk.h"
+#include "inc/stdio.h"
 #include "kern/env.h"
 #include "kern/pmap.h"
 #include "kern/trap.h"

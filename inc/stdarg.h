@@ -1,5 +1,5 @@
-#ifndef STDARG_H
-#define	STDARG_H
+#ifndef INC_STDARG_H
+#define	INC_STDARG_H
 
 typedef __builtin_va_list va_list;
 
@@ -9,4 +9,4 @@ typedef __builtin_va_list va_list;
 
 #define va_end(ap) __builtin_va_end(ap)
 
-#endif	/* !JOS_INC_STDARG_H */
+#endif	/* INC_STDARG_H */

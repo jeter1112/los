@@ -1,5 +1,5 @@
-#ifndef STRING_H
-#define STRING_H
+#ifndef INC_STRING_H
+#define INC_STRING_H
 
 #include "inc/types.h"
 
@@ -22,4 +22,4 @@ void *	memfind(const void *s, int c, size_t len);
 
 long	strtol(const char *s, char **endptr, int base);
 
-#endif /* not JOS_INC_STRING_H */
+#endif /* INC_STRING_H */

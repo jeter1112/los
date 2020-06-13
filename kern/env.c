@@ -2,7 +2,7 @@
 #include "inc/error.h"
 #include "inc/mmu.h"
 #include "inc/string.h"
-#include "inc/printk.h"
+#include "inc/stdio.h"
 #include "inc/assert.h"
 #include "inc/elf.h"
 #include "kern/env.h"

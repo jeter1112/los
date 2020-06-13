@@ -1,10 +1,12 @@
-#include"pmap.h"
+
 #include"inc/x86.h"
 #include"inc/memlayout.h"
-#include"inc/kclock.h"
-#include"inc/printk.h"
+#include"inc/stdio.h"
 #include "inc/string.h"
 #include"inc/assert.h"
+
+#include"kern/kclock.h"
+#include"kern/pmap.h"
 #include"kern/env.h"
 /**
  * @brief pmap.c is the abbreation of page mapping.

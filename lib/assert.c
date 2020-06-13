@@ -1,5 +1,5 @@
 #include"inc/assert.h"
-#include"inc/printk.h"
+#include"inc/stdio.h"
 #include"inc/stdarg.h"
 /*
  * Variable panicstr contains argument to first call to panic; used as flag
