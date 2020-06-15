@@ -1,48 +1,11 @@
-# boot:
-# 	gcc  -std=gnu99  -m32  -ggdb -c   boot.S -o boot.o
-# 	gcc  -std=gnu99  -m32  -ggdb -O -c   bootmain.c 
-	
-# 	## boot for ia32
-# load: boot 
-# 	ld -m    elf_i386   -Ttext 0x7C00  -e start boot.o bootmain.o -o boot.out
-# 	## truncate elf_i386 elf header.
-# 	objdump -S boot.out > bootsec.asm
-# 	objcopy -S -O binary -j .text boot.out boot
-# 	perl sign.pl boot
 
-# kernel:load
-# 	gcc -pipe -nostdinc -O1 -fno-builtin -I. -MD -fno-omit-frame-pointer -std=gnu99 -static -mno-accumulate-outgoing-args -Wall -Wno-format -Wno-unused -Werror -gstabs -m32 -fno-tree-ch -fno-stack-protector  -gstabs -c -o  entrypgdir.o entrypgdir.c
-# 	gcc -pipe -nostdinc -O1 -fno-builtin -I. -MD -fno-omit-frame-pointer -std=gnu99 -static -mno-accumulate-outgoing-args -Wall -Wno-format -Wno-unused -Werror -gstabs -m32 -fno-tree-ch -fno-stack-protector  -gstabs -c -o  init.o init.c
-# 	gcc -pipe -nostdinc -O1 -fno-builtin -I. -MD -fno-omit-frame-pointer -std=gnu99 -static -mno-accumulate-outgoing-args -Wall -Wno-format -Wno-unused -Werror -gstabs -m32 -fno-tree-ch -fno-stack-protector  -gstabs -c -o  vga.o vga.c
-# 	gcc -pipe -nostdinc -O1 -fno-builtin -I. -MD -fno-omit-frame-pointer -std=gnu99 -static -mno-accumulate-outgoing-args -Wall -Wno-format -Wno-unused -Werror -gstabs -m32 -fno-tree-ch -fno-stack-protector  -gstabs -c -o  printk.o printk.c
-# 	gcc -pipe -nostdinc -O1 -fno-builtin -I. -MD -fno-omit-frame-pointer -std=gnu99 -static -mno-accumulate-outgoing-args -Wall -Wno-format -Wno-unused -Werror -gstabs -m32 -fno-tree-ch -fno-stack-protector  -gstabs -c -o  kclock.o kclock.c
-# 	gcc -pipe -nostdinc -O1 -fno-builtin -I. -MD -fno-omit-frame-pointer -std=gnu99 -static -mno-accumulate-outgoing-args -Wall -Wno-format -Wno-unused -Werror -gstabs -m32 -fno-tree-ch -fno-stack-protector  -gstabs -c -o  pmap.o pmap.c
-# 	gcc -pipe -nostdinc -O1 -fno-builtin -I. -MD -fno-omit-frame-pointer -std=gnu99 -static -mno-accumulate-outgoing-args -Wall -Wno-format -Wno-unused -Werror -gstabs -m32 -fno-tree-ch -fno-stack-protector  -gstabs -c -o  string.o string.c
-# 	gcc -pipe -nostdinc -O1 -fno-builtin -I. -MD -fno-omit-frame-pointer -std=gnu99 -static -mno-accumulate-outgoing-args -Wall -Wno-format -Wno-unused -Werror -gstabs -m32 -fno-tree-ch -fno-stack-protector  -gstabs -c -o  assert.o assert.c
-# 	gcc  -std=gnu99  -m32  -ggdb -c   entry.S -o entry.o
-	
-# 	ld -o entry -m elf_i386 -T kernel.ld -nostdlib  entry.o entrypgdir.o init.o vga.o printk.o string.o pmap.o kclock.o assert.o /usr/lib/gcc/x86_64-linux-gnu/4.8/32/libgcc.a -b binary
-# 	objdump -S entry > kentry.asm
-# 	$(NM) -n entry.out > entry.sym
-# 	dd if=/dev/zero of=kernel.img~ count=10000 2>/dev/null
-# 	dd if=boot of=kernel.img~ conv=notrunc 2>/dev/null
-# 	dd if=entry of=kernel.img~ seek=1 conv=notrunc 2>/dev/null
-# 	mv kernel.img~ kernel.img
-
-# qemu-gdb: kernel
-# 	qemu-system-i386 kernel.img -gdb tcp::1234 -S
-# qemu: kernel
-# 	qemu-system-i386 kernel.img
-# gdb:
-# 	gdb -n -x .gdbinit
-
-# clean:
-# 	rm -rf *.o *.img boot.d boot entrys entry.sym kernel.sym kernel.img boot.out *.d entry
 
 INC_DIR:=./
 LIBDIR:=lib
 KERNDIR:=kern
 BOOTDIR:=boot
+USERDIR:=user
+
 OBJDIR:=obj
 
 CFLAGS:=-pipe -nostdinc -O1 -fno-builtin -I. -MD -fno-omit-frame-pointer -std=gnu99 -static -mno-accumulate-outgoing-args -Wall -Wno-format -Wno-unused -Werror -gstabs -m32 -fno-tree-ch -fno-stack-protector   -gstabs  
@@ -51,7 +14,7 @@ C_BOOTFLAGS:=-std=gnu99  -m32  -ggdb -O -I$(INC_DIR)
 
 LD_BOOTFLAGS:=-m    elf_i386   -Ttext 0x7C00  -e entry
 LD_KERNFLAGS:=-m elf_i386 -T $(KERNDIR)/kernel.ld -nostdlib 
-
+LD_USERFLAGS := -T user/user.ld  -m    elf_i386 -nostdlib 
 QEMU:=qemu-system-i386
 
 
@@ -71,10 +34,30 @@ BOOTOBJ:=$(patsubst $(BOOTDIR)/%.S,$(OBJDIR)/$(BOOTDIR)/%.o,$(BOOTASM))
 BOOTOBJ+=$(patsubst $(BOOTDIR)/%.c,$(OBJDIR)/$(BOOTDIR)/%.o,$(BOOTSRC))
 
 
+KERN_BINFILES :=	user/hello \
+			user/buggyhello \
+			user/buggyhello2 \
+			user/evilhello \
+			user/testbss \
+			user/divzero \
+			user/breakpoint \
+			user/softint \
+			user/badsegment \
+			user/faultread \
+			user/faultreadkernel \
+			user/faultwrite \
+			user/faultwritekernel
 
+KERN_BINFILES := $(patsubst %, $(OBJDIR)/%, $(KERN_BINFILES))
 
+KERN_OBJFILES:= kern/entry.o 	kern/entrypgdir.o  		kern/init.o     kern/pmap.o     kern/trap.o       kern/kclock.o      kern/trapentry.o \
+				kern/env.o       kern/syscall.o      kern/printf.o   kern/console.o		lib/printfmt.o		lib/readline.o		lib/string.o 	lib/assert.o
 
+KERN_OBJFILES := $(patsubst %, $(OBJDIR)/%, $(KERN_OBJFILES))
+USER_LIBFILES := lib/entry.o  lib/console.o   lib/exit.o  lib/libmain.o  lib/printf.o  lib/printfmt.o   lib/syscall.o
+USER_LIBFILES  := $(patsubst %, $(OBJDIR)/%, $(USER_LIBFILES ))
 
+USER_OBJ := $(patsubst %, %.o, $(KERN_BINFILES))
 # BOOTLOADER compile and 512 byte.
 $(OBJDIR)/$(BOOTDIR)/boot:$(BOOTOBJ)
 	ld $(LD_BOOTFLAGS) $^ -o $@.out 
@@ -98,8 +81,6 @@ $(OBJDIR)/$(BOOTDIR)/%.o:$(BOOTDIR)/%.c
 
 
 
-OBJDIRS += kern
-
 KERN_LDFLAGS := $(LDFLAGS) -T kern/kernel.ld -nostdlib
 
 # entry.S must be first, so that it's the first code in the text segment!!!
@@ -110,9 +91,9 @@ KERN_LDFLAGS := $(LDFLAGS) -T kern/kernel.ld -nostdlib
 
 ## /usr/lib/gcc/x86_64-linux-gnu/4.8/32/libgcc.a
 #KERNEL compile
-$(OBJDIR)/$(KERNDIR)/kernel: $(KERNOBJ) $(LIBOBJ)
+$(OBJDIR)/$(KERNDIR)/kernel: $(KERNOBJ) $(LIBOBJ) $(KERN_BINFILES)
 
-	ld $(LD_KERNFLAGS) $^ /usr/lib/gcc/x86_64-linux-gnu/7.5.0/32/libgcc.a -b binary -o $@
+	ld -o $@ $(LD_KERNFLAGS) $(KERN_OBJFILES)  /usr/lib/gcc/x86_64-linux-gnu/7.5.0/32/libgcc.a -b binary $(KERN_BINFILES)
 	objdump -S $@ > $@.asm
 	nm -n $@ >$@.sym
 	dd if=/dev/zero of=$@.img~ count=10000 2>/dev/null
@@ -134,6 +115,19 @@ $(OBJDIR)/$(KERNDIR)/%.o:$(KERNDIR)/%.c
 $(OBJDIR)/$(LIBDIR)/%.o:$(LIBDIR)/%.c	
 	mkdir -p $(@D)
 	gcc $(CFLAGS) -c   $< -o  $@
+
+$(OBJDIR)/usr/%.o:$(LIBDIR)/%.S	
+	mkdir -p $(@D)
+	gcc $(CFLAGS) -c   $< -o  $@
+
+$(OBJDIR)/$(USERDIR)/%.o: $(USERDIR)/%.c
+	mkdir -p $(@D)
+	gcc $(CFLAGS) -c   $< -o  $@
+
+$(OBJDIR)/user/%: $(OBJDIR)/user/%.o $(OBJDIR)/usr/entry.o 
+	ld -o $@ $(LD_USERFLAGS) $(USER_LIBFILES)  /usr/lib/gcc/x86_64-linux-gnu/7.5.0/32/libgcc.a
+	objdump -S $@ > $@.asm
+	nm -n $@ >$@.sym
 
 
 qemu-gdb: $(OBJDIR)/$(BOOTDIR)/boot  $(OBJDIR)/$(KERNDIR)/kernel
