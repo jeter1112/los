@@ -2,7 +2,7 @@
 // Contributed by Varun Agrawal at Stony Brook
 
 #include <inc/lib.h>
-
+#include "inc/stdio.h"
 const char *str1 = "hello child environment! how are you?";
 const char *str2 = "hello parent environment! I'm good.";
 

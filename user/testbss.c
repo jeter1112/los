@@ -1,7 +1,7 @@
 // test reads and writes to a large bss
 
 #include <inc/lib.h>
-
+#include "inc/stdio.h"
 #define ARRAYSIZE (1024*1024)
 
 uint32_t bigarray[ARRAYSIZE];

@@ -1,7 +1,7 @@
 // buggy program - causes a divide by zero exception
 
 #include <inc/lib.h>
-
+#include "inc/stdio.h"
 int zero;
 
 void

@@ -1,9 +1,9 @@
 // Simple implementation of cprintf console output for the kernel,
 // based on printfmt() and the kernel console's cputchar().
 
-#include "inc/types.h"
-#include "inc/stdio.h"
-#include "inc/stdarg.h"
+#include <inc/types.h>
+#include <inc/stdio.h>
+#include <inc/stdarg.h>
 
 
 static void
@@ -34,6 +34,7 @@ cprintf(const char *fmt, ...)
 
 	return cnt;
 }
+
 int printk(const char*fmt,...)
 {
 

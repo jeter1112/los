@@ -1,7 +1,7 @@
 // buggy program - faults with a write to location zero
 
 #include <inc/lib.h>
-
+#include "inc/stdio.h"
 void
 umain(int argc, char **argv)
 {
