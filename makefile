@@ -99,7 +99,7 @@ $(OBJDIR)/$(BOOTDIR)/%.o:$(BOOTDIR)/%.c
 #KERNEL compile
 $(OBJDIR)/$(KERNDIR)/kernel: $(KERNOBJ) $(LIBOBJ)
 
-	ld $(LD_KERNFLAGS) $^ /usr/lib/gcc/x86_64-linux-gnu/4.8/32/libgcc.a -b binary -o $@
+	ld $(LD_KERNFLAGS) $^ `find /usr/lib/gcc/x86_64-linux-gnu |grep /32/libgcc.a` -b binary -o $@
 	objdump -S $@ > $@.asm
 	nm -n $@ >$@.sym
 	dd if=/dev/zero of=$@.img~ count=10000 2>/dev/null
