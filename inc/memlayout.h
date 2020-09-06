@@ -143,7 +143,7 @@
 typedef uint32_t pte_t;
 typedef uint32_t pde_t;
 
-#if JOS_USER
+
 /*
  * The page directory entry corresponding to the virtual address range
  * [UVPT, UVPT + PTSIZE) points to the page directory itself.  Thus, the page
@@ -160,7 +160,7 @@ typedef uint32_t pde_t;
  */
 extern volatile pte_t uvpt[];     // VA of "virtual page table"
 extern volatile pde_t uvpd[];     // VA of current page directory
-#endif
+
 
 /*
  * Page descriptor structures, mapped at UPAGES.

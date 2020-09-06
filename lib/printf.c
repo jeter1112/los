@@ -60,3 +60,13 @@ cprintf(const char *fmt, ...)
 	return cnt;
 }
 
+int printk(const char*fmt,...)
+{
+
+    va_list ap;
+    int cnt;
+    va_start(ap,fmt);
+    cnt=vcprintf(fmt,ap);
+    va_end(ap);
+    return cnt;
+}
