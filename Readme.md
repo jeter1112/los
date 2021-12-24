@@ -1,4 +1,4 @@
-# Create my own OS from scratch
+# Create my own OS from scratch(from MIT 6.828)
 
 ## Bootloader
 
